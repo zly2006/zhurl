@@ -25,6 +25,10 @@ cargo run -- --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
 cargo run -- --android --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
 ```
 
+## API 参考
+
+常用知乎 API 已按主题整理在 [docs/apis.md](docs/apis.md)，每个接口包含模式、登录和签名要求、参数、`zhurl` 示例和脱敏返回示例。
+
 ## Output
 
 - When stdout is a TTY, JSON output is pretty-printed and colorized by default.
