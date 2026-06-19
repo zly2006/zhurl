@@ -1,0 +1,13 @@
+[package]
+name = "zhurl"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "curl-like Zhihu API client with local Zhihu++ cookies"
+
+[dependencies]
+jaq-all = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ureq = "3"
+zhihu_sign = "=0.1.0"
