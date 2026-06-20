@@ -1,29 +1,21 @@
 # zhurl
 
-`zhurl` is a small curl-like CLI for authenticated Zhihu API requests.
-It is self-contained: HTTP is handled by `ureq`, `--jq` is handled by embedded
-`jaq`, and web request signing is handled by `zhihu_sign = "=0.1.0"`.
+非官方知乎API收集整理，可用于个人学习、AI Agent、信息收集、爬虫等用途。
 
 安装方法：
 ```bash
 cargo install zhurl
 ```
 
-It reads the Zhihu++ desktop account file from:
+它从`~/.zhihu-plus-plus/account.json`读取知乎的cookie。这个cookie文件可以通过在电脑端登录[知乎++](https://github.com/zly2006/zhihu-plus-plus)自动生成。
 
-```text
-~/.zhihu-plus-plus/account.json
-```
-
-The account must be logged in and contain `z_c0`. Web mode also requires `d_c0`.
-
-## Usage
+## 用法
 
 ```bash
 zhurl [--web|--android] [--jq FILTER] [-X METHOD] [-H 'Name: value'] [-d DATA] [-i] [-o FILE] URL
 ```
 
-Examples:
+示例:
 
 ```bash
 cargo run -- --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
