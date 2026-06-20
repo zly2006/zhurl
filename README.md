@@ -1,6 +1,8 @@
 # zhurl
 
-非官方知乎API收集整理，可用于个人学习、AI Agent、信息收集、爬虫等用途。
+zhurl 是一个非官方的命令行（CLI）知乎客户端。
+
+本仓库还包括了一套非官方知乎API文档，可用于个人学习、AI Agent、信息收集、爬虫等用途。
 
 安装方法：
 ```bash
@@ -18,8 +20,8 @@ zhurl [--web|--android] [--jq FILTER] [-X METHOD] [-H 'Name: value'] [-d DATA] [
 示例:
 
 ```bash
-cargo run -- --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
-cargo run -- --android --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
+zhurl --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
+zhurl --android --jq '{id, name}' 'https://www.zhihu.com/api/v4/me'
 ```
 
 ## API 参考
