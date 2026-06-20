@@ -9,6 +9,12 @@ repository = "https://github.com/zly2006/zhurl"
 readme = "README.md"
 keywords = ["zhihu", "cli", "api-client", "jq", "curl"]
 categories = ["command-line-utilities", "web-programming::http-client"]
+include = [
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+    "src/**",
+]
 
 [dependencies]
 jaq-all = "0.2"
