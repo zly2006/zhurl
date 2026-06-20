@@ -2,8 +2,13 @@
 name = "zhurl"
 version = "0.1.0"
 edition = "2024"
-license = "MIT"
+rust-version = "1.85"
+license = "AGPL-3.0-only"
 description = "curl-like Zhihu API client with local Zhihu++ cookies"
+repository = "https://github.com/zly2006/zhurl"
+readme = "README.md"
+keywords = ["zhihu", "cli", "api-client", "jq", "curl"]
+categories = ["command-line-utilities", "web-programming::http-client"]
 
 [dependencies]
 jaq-all = "0.2"
