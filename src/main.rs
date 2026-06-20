@@ -7,8 +7,10 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 const DEFAULT_ZHIHU_USER_AGENT: &str = "Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/540.0 (KHTML, like Gecko) Ubuntu/10.10 Chrome/9.1.0.0 Safari/540.0";
-const ANDROID_USER_AGENT: &str = "com.zhihu.android/Futureve/10.61.0 Mozilla/5.0 (Linux; Android 12; sdk_gphone64_arm64 Build/SE1A.220630.001.A1; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.1000.10 Mobile Safari/537.36";
-const ANDROID_APP_ZA: &str = "OS=Android&Release=12&Model=sdk_gphone64_arm64&VersionName=10.61.0&VersionCode=26107&Product=com.zhihu.android&Width=1440&Height=2952&Installer=%E7%81%B0%E5%BA%A6&DeviceType=AndroidPhone&Brand=google";
+const ANDROID_API_VERSION: &str = "3.0.93";
+const ANDROID_APP_VERSION: &str = "10.100.0";
+const ANDROID_USER_AGENT: &str = "com.zhihu.android/Futureve/10.100.0 Mozilla/5.0 (Linux; Android 12; sdk_gphone64_arm64 Build/SE1A.220630.001.A1; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.1000.10 Mobile Safari/537.36";
+const ANDROID_APP_ZA: &str = "OS=Android&Release=12&Model=sdk_gphone64_arm64&VersionName=10.100.0&VersionCode=30008&Product=com.zhihu.android&Width=1440&Height=2952&Installer=Market&DeviceType=AndroidPhone&Brand=google";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Mode {
@@ -304,9 +306,14 @@ fn build_headers(
         }
         Mode::Android => {
             set_header(&mut headers, "User-Agent", ANDROID_USER_AGENT);
-            set_header(&mut headers, "x-api-version", "3.1.8");
-            set_header(&mut headers, "x-app-version", "10.61.0");
+            set_header(&mut headers, "x-page-id", "132");
+            set_header(&mut headers, "x-api-version", ANDROID_API_VERSION);
+            set_header(&mut headers, "x-app-version", ANDROID_APP_VERSION);
             set_header(&mut headers, "x-app-za", ANDROID_APP_ZA);
+            set_header(&mut headers, "x-app-bundleid", "com.zhihu.android");
+            set_header(&mut headers, "x-app-flavor", "zhihuwap64");
+            set_header(&mut headers, "x-app-build", "release");
+            set_header(&mut headers, "x-network-type", "3G");
         }
     }
 
@@ -610,6 +617,13 @@ Differences from curl/jq:
 mod tests {
     use super::*;
 
+    fn header_value<'a>(headers: &'a [Header], name: &str) -> Option<&'a str> {
+        headers
+            .iter()
+            .find(|header| header.name.eq_ignore_ascii_case(name))
+            .map(|header| header.value.as_str())
+    }
+
     #[test]
     fn extracts_signed_path_and_query() {
         assert_eq!(
@@ -661,6 +675,47 @@ mod tests {
             validate_account(&account, Mode::Web).unwrap_err(),
             "account is missing signing cookie d_c0",
         );
+    }
+
+    #[test]
+    fn android_mode_sets_current_mobile_headers() {
+        let cli = parse_args(
+            [
+                "--android",
+                "https://api.zhihu.com/people/id/profile?profile_new_version=1&profile_v4=1",
+            ]
+            .into_iter()
+            .map(String::from),
+        )
+        .unwrap();
+        let account = AccountSession {
+            login: true,
+            user_agent: None,
+            cookies: BTreeMap::from([("z_c0".to_string(), "token".to_string())]),
+        };
+        let headers = build_headers(&cli, &account, false, None).unwrap();
+
+        assert_eq!(
+            header_value(&headers, "User-Agent"),
+            Some(ANDROID_USER_AGENT)
+        );
+        assert_eq!(header_value(&headers, "x-page-id"), Some("132"));
+        assert_eq!(
+            header_value(&headers, "x-api-version"),
+            Some(ANDROID_API_VERSION)
+        );
+        assert_eq!(
+            header_value(&headers, "x-app-version"),
+            Some(ANDROID_APP_VERSION)
+        );
+        assert_eq!(header_value(&headers, "x-app-za"), Some(ANDROID_APP_ZA));
+        assert_eq!(
+            header_value(&headers, "x-app-bundleid"),
+            Some("com.zhihu.android")
+        );
+        assert_eq!(header_value(&headers, "x-app-flavor"), Some("zhihuwap64"));
+        assert_eq!(header_value(&headers, "x-app-build"), Some("release"));
+        assert_eq!(header_value(&headers, "x-network-type"), Some("3G"));
     }
 
     #[test]
