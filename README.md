@@ -4,6 +4,11 @@
 It is self-contained: HTTP is handled by `ureq`, `--jq` is handled by embedded
 `jaq`, and web request signing is handled by `zhihu_sign = "=0.1.0"`.
 
+安装方法：
+```bash
+cargo install zhurl
+```
+
 It reads the Zhihu++ desktop account file from:
 
 ```text
